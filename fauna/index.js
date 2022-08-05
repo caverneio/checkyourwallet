@@ -16,12 +16,13 @@ const {
   Let,
   Select,
   Delete,
+  CurrentIdentity,
 } = query;
 
 class FaunaClient {
-  constructor() {
+  constructor(accessToken) {
     this.client = new Client({
-      secret: process.env.FAUNADB_SECRET,
+      secret: accessToken,
       domain: process.env.FAUNADB_DOMAIN,
     });
   }
@@ -30,10 +31,16 @@ class FaunaClient {
     return this.client
       .query(
         Map(
-          Paginate(Match(Index("items_by_day"), FaunaDate(date)), {
-            size: 20,
-            after: Ref(Collection("items"), "339103095864688712"),
-          }),
+          Paginate(
+            Match(Index("user_items_by_day"), [
+              CurrentIdentity(),
+              FaunaDate(date),
+            ]),
+            {
+              size: 20,
+              after: Ref(Collection("items"), "339103095864688712"),
+            }
+          ),
           Lambda(
             ["ref"],
             Let(
@@ -60,6 +67,7 @@ class FaunaClient {
             description,
             value: parseFloat(value),
             day: FaunaDate(date),
+            user: CurrentIdentity(),
           },
         })
       )

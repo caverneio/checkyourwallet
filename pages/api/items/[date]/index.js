@@ -1,15 +1,16 @@
 import FaunaClient from "fauna";
-
-export default async function handler(req, res) {
+import { withApiAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
+async function handler(req, res) {
   try {
+    const { accessToken } = await getAccessToken(req, res);
+    const client = new FaunaClient(accessToken);
+
     if (req.method === "GET") {
       const { date } = req.query;
-      const client = new FaunaClient();
       const items = await client.getItems(date);
 
       res.status(200).json(items);
     } else if (req.method === "POST") {
-      const client = new FaunaClient();
       const { date } = req.query;
       const { description, value } = req.body;
       const item = await client.createItem(date, description, value);
@@ -20,3 +21,4 @@ export default async function handler(req, res) {
     res.status(500).json({ error });
   }
 }
+export default withApiAuthRequired(handler);
