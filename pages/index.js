@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Item from "components/item";
+import Head from "next/head";
 
 export default function Home() {
   const today_date = new Date().toISOString().split("T")[0];
@@ -106,49 +107,53 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-gray-600">
-      <div className="space-y-2 mx-auto max-w-xl bg-gray-50 h-screen flex flex-col p-4">
-        <div className="flex flex-col space-y-2 pb-4">
+    <>
+      <Head>
+        <title>Check your wallet!</title>
+      </Head>
+      <div className="bg-gray-600">
+        <div className="space-y-2 mx-auto max-w-xl bg-gray-50 h-screen flex flex-col p-4">
+          <div className="flex flex-col space-y-2 pb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-center">Tu balance</h1>
+              <p className="text-center">Hoy {today_date}</p>
+            </div>
+            <div className="flex flex-col space-y-2 sm:space-x-2 sm:flex-row items-center justify-between w-full">
+              <div className="text-green-500 bg-gray-100 w-32 h-10 border rounded flex justify-center items-center">
+                <h1 className="text-2xl font-bold font-mono">
+                  <span className="text-xl">S/</span>
+                  {(incomes && incomes.toFixed(2)) || 0}
+                </h1>
+              </div>
+              <div className="bg-gray-100 w-48 h-16 border rounded flex justify-center items-center">
+                <h1 className="text-5xl font-bold font-mono">
+                  <span className="text-xl">S/</span>
+                  {(balance && balance.toFixed(2)) || 0}
+                </h1>
+              </div>
+              <div className="bg-gray-100 w-32 h-10 border rounded flex justify-center items-center">
+                <h1 className="text-red-500 text-2xl font-bold font-mono">
+                  <span className="text-xl">S/</span>
+                  {(expenses && expenses.toFixed(2)) || 0}
+                </h1>
+              </div>
+            </div>
+          </div>
           <div>
-            <h1 className="text-3xl font-bold text-center">Tu balance</h1>
-            <p className="text-center">Hoy {today_date}</p>
-          </div>
-          <div className="flex items-center justify-between w-full">
-            <div className="text-green-500 bg-gray-100 w-32 h-10 border rounded flex justify-center items-center">
-              <h1 className="text-2xl font-bold font-mono">
-                <span className="text-xl">S/</span>
-                {(incomes && incomes.toFixed(2)) || 0}
-              </h1>
-            </div>
-            <div className="bg-gray-100 w-48 h-16 border rounded flex justify-center items-center">
-              <h1 className="text-5xl font-bold font-mono">
-                <span className="text-xl">S/</span>
-                {(balance && balance.toFixed(2)) || 0}
-              </h1>
-            </div>
-            <div className="bg-gray-100 w-32 h-10 border rounded flex justify-center items-center">
-              <h1 className="text-red-500 text-2xl font-bold font-mono">
-                <span className="text-xl">S/</span>
-                {(expenses && expenses.toFixed(2)) || 0}
-              </h1>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div className="divide-y px-4 grid grid-cols-1">
-            {items &&
-              items.length > 0 &&
-              items.map((item) => (
-                <Item deleteItem={deleteItem} key={item.id} {...item} />
-              ))}
-            <div className="flex justify-between">
-              <div>
-                <div
-                  ref={descriptionRef}
-                  type="text"
-                  contentEditable
-                  className='
-                  -ml-3
+            <div className="divide-y px-4 grid grid-cols-1">
+              {items &&
+                items.length > 0 &&
+                items.map((item) => (
+                  <Item deleteItem={deleteItem} key={item.id} {...item} />
+                ))}
+              <div className="flex justify-between">
+                <div>
+                  <div
+                    ref={descriptionRef}
+                    type="text"
+                    contentEditable
+                    className='
+                  p-0
                   bg-transparent
                   focus:ring-0
                   border-0 
@@ -157,14 +162,15 @@ export default function Home() {
                   empty:before:text-gray-500
                   empty:before
                   '
-                />
-              </div>
-              <div
-                ref={valueRef}
-                type="text"
-                contentEditable
-                className='
-                  w-[6.5rem]
+                  />
+                </div>
+                <div
+                  ref={valueRef}
+                  type="text"
+                  contentEditable
+                  className='
+                  w-28
+                  p-0
                   bg-transparent
                   focus:ring-0
                   border-0 
@@ -174,39 +180,39 @@ export default function Home() {
                   empty:before
                   font-mono
                   text-right
-                  -mr-3
                   border-l border-gray-200
                   ring-0
                   focus:border-gray-200
                   '
-              />
+                />
+              </div>
+              {errors &&
+                errors.length > 0 &&
+                errors.map((error, i) => (
+                  <div className="text-red-500" key={i}>
+                    {error}
+                  </div>
+                ))}
+              <button
+                type="submit"
+                onClick={addItem}
+                className="w-full mt-2 py-1 bg-blue-500 rounded text-white font-bold text-xl"
+              >
+                Añadir
+              </button>
             </div>
-            {errors &&
-              errors.length > 0 &&
-              errors.map((error, i) => (
-                <div className="text-red-500" key={i}>
-                  {error}
-                </div>
-              ))}
-            <button
-              type="submit"
-              onClick={addItem}
-              className="w-full mt-2 py-1 bg-blue-500 rounded text-white font-bold text-xl"
-            >
-              Añadir
-            </button>
+          </div>
+          <div className="flex justify-between px-4">
+            <Link href={`/${yesterday_date}`}>
+              <a>
+                <button className="bg-red-500 w-20 rounded text-white font-bold">
+                  Atrás
+                </button>
+              </a>
+            </Link>
           </div>
         </div>
-        <div className="flex justify-between px-4">
-          <Link href={`/${yesterday_date}`}>
-            <a>
-              <button className="bg-red-500 w-20 rounded text-white font-bold">
-                Atrás
-              </button>
-            </a>
-          </Link>
-        </div>
       </div>
-    </div>
+    </>
   );
 }

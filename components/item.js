@@ -16,7 +16,7 @@ const Item = ({ id, description, value, deleteItem }) => {
         color: text_color,
       }}
     >
-      <div className="flex justify-between w-full pr-2">
+      <div className="flex justify-between grow pr-2">
         <h1 className="text-xl">{description}</h1>
         <button
           type="button"
