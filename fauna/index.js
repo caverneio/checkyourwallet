@@ -15,6 +15,7 @@ const {
   Ref,
   Let,
   Select,
+  Delete,
 } = query;
 
 class FaunaClient {
@@ -25,20 +26,14 @@ class FaunaClient {
     });
   }
 
-  async getItems() {
+  async getItems(date) {
     return this.client
       .query(
         Map(
-          Paginate(
-            Match(
-              Index("items_by_day"),
-              FaunaDate(new Date().toISOString().split("T")[0])
-            ),
-            {
-              size: 10,
-              after: Ref(Collection("items"), "339095863724867650"),
-            }
-          ),
+          Paginate(Match(Index("items_by_day"), FaunaDate(date)), {
+            size: 20,
+            after: Ref(Collection("items"), "339103095864688712"),
+          }),
           Lambda(
             ["ref"],
             Let(
@@ -57,17 +52,23 @@ class FaunaClient {
       .then((res) => ParseFaunaObj(res));
   }
 
-  async createItem(description, value) {
+  async createItem(date, description, value) {
     return this.client
       .query(
         Create(Collection("items"), {
           data: {
             description,
             value: parseFloat(value),
-            day: FaunaDate(new Date().toISOString().split("T")[0]),
+            day: FaunaDate(date),
           },
         })
       )
+      .then((res) => ParseFaunaObj(res));
+  }
+
+  async deleteItem(id) {
+    return this.client
+      .query(Delete(Ref(Collection("items"), id)))
       .then((res) => ParseFaunaObj(res));
   }
 }

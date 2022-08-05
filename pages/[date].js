@@ -1,14 +1,34 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import Item from "components/item";
 
-export default function Home() {
+export default function DatePage() {
+  const day_names = [
+    "Lunes",
+    "Martes",
+    "Miércoles",
+    "Jueves",
+    "Viernes",
+    "Sabado",
+    "Domingo",
+  ];
+  const router = useRouter();
   const today_date = new Date().toISOString().split("T")[0];
   const yesterday_date = new Date(new Date().setDate(new Date().getDate() - 1))
     .toISOString()
     .split("T")[0];
-
-  const counter = useRef(0);
+  const { date } = router.query;
+  const day_back_date =
+    date &&
+    new Date(new Date(date).setDate(new Date(date).getDate() - 1))
+      .toISOString()
+      .split("T")[0];
+  const day_forward_date =
+    date &&
+    new Date(new Date(date).setDate(new Date(date).getDate() + 1))
+      .toISOString()
+      .split("T")[0];
 
   const descriptionRef = useRef();
   const valueRef = useRef();
@@ -32,10 +52,14 @@ export default function Home() {
 
   const fetchItems = async () => {
     try {
-      const response = await fetch("/api/items/" + today_date);
-      const items = await response.json();
-      if (items.data && items.data.length > 0) {
-        setItems(items.data);
+      if (date) {
+        const response = await fetch("/api/items/" + date);
+        const items = await response.json();
+        if (items.data && items.data.length > 0) {
+          setItems(items.data);
+        } else {
+          setItems([]);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -43,11 +67,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (counter.current === 0) {
+    if (date) {
       fetchItems();
     }
-    counter.current++;
-  }, []);
+  }, [date]);
 
   const addItem = async () => {
     try {
@@ -69,7 +92,7 @@ export default function Home() {
         return false;
       }
 
-      const response = await fetch("/api/items/" + today_date, {
+      const response = await fetch("/api/items/" + date, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +134,14 @@ export default function Home() {
         <div className="flex flex-col space-y-2 pb-4">
           <div>
             <h1 className="text-3xl font-bold text-center">Tu balance</h1>
-            <p className="text-center">Hoy {today_date}</p>
+            <p className="text-center">
+              {date === today_date
+                ? "Hoy"
+                : date === yesterday_date
+                ? "Ayer"
+                : day_names[new Date(date).getDay()]}{" "}
+              {date}
+            </p>
           </div>
           <div className="flex items-center justify-between w-full">
             <div className="text-green-500 bg-gray-100 w-32 h-10 border rounded flex justify-center items-center">
@@ -198,13 +228,22 @@ export default function Home() {
           </div>
         </div>
         <div className="flex justify-between px-4">
-          <Link href={`/${yesterday_date}`}>
+          <Link href={`/${day_back_date}`} passHref>
             <a>
-              <button className="bg-red-500 w-20 rounded text-white font-bold">
+              <button className="bg-red-500 w-24 h-8 rounded text-white font-bold">
                 Atrás
               </button>
             </a>
           </Link>
+          {day_forward_date && today_date && day_forward_date <= today_date && (
+            <Link href={`/${day_forward_date}`} passHref>
+              <a>
+                <button className="bg-red-500 w-24 h-8 rounded text-white font-bold">
+                  Adelante
+                </button>
+              </a>
+            </Link>
+          )}
         </div>
       </div>
     </div>
