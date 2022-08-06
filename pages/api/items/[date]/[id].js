@@ -3,7 +3,7 @@ import { withApiAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
 
 async function handler(req, res) {
   try {
-    const {accessToken} = await getAccessToken();
+    const {accessToken} = await getAccessToken(accessToken);
     const client = new FaunaClient();
   if (req.method === "DELETE") {
       const { id } = req.query;
