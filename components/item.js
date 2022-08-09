@@ -11,7 +11,7 @@ const Item = ({ id, description, value, deleteItem }) => {
 
   return (
     <div
-      className="flex justify-between divide-x hover:bg-gray-100"
+      className="flex justify-between divide-x dark:divide-gray-600 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700"
       style={{
         color: text_color,
       }}
@@ -21,7 +21,7 @@ const Item = ({ id, description, value, deleteItem }) => {
         <button
           type="button"
           onClick={handleDelete}
-          className="text-gray-200 hover:text-red-400"
+          className="text-gray-200 dark:text-gray-600 hover:text-red-400 dark:hover:text-red-400"
         >
           <svg
             className="h-6 w-6"

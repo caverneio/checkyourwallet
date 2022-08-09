@@ -1,5 +1,6 @@
 import FaunaClient from "fauna";
 import { withApiAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
+
 async function handler(req, res) {
   try {
     const { accessToken } = await getAccessToken(req, res);
@@ -11,8 +12,7 @@ async function handler(req, res) {
 
       res.status(200).json(items);
     } else if (req.method === "POST") {
-      const { date } = req.query;
-      const { description, value } = req.body;
+      const { description, value, date } = req.body;
       const item = await client.createItem(date, description, value);
       res.status(200).json(item);
     }

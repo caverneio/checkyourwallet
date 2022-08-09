@@ -1,10 +1,13 @@
 import FaunaClient from "fauna";
+import { withApiAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   try {
+    const { accessToken } = await getAccessToken(req, res);
+    const client = new FaunaClient(accessToken);
+
     if (req.method === "DELETE") {
       const { id } = req.query;
-      const client = new FaunaClient();
       const items = await client.deleteItem(id);
 
       res.status(200).json(items);
@@ -14,3 +17,4 @@ export default async function handler(req, res) {
     res.status(500).json({ error });
   }
 }
+export default withApiAuthRequired(handler);

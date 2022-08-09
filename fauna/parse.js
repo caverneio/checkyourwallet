@@ -13,31 +13,15 @@ export default function ParseFaunaObj(obj) {
           data: ParseFaunaObj(obj.data),
         };
       }
-      return {
-        data: ParseFaunaObj(obj.data),
-      };
-    }
-
-    if (obj.ref && obj.data) {
-      return {
-        id: obj.ref.id,
-        ...ParseFaunaObj(obj.data),
-      };
+      return ParseFaunaObj(obj.data);
     }
 
     if (obj.collection && obj.id) {
-      return obj.id;
+      return { id: obj.id, collection: obj.collection.id };
     }
 
     Object.keys(obj).forEach((k) => {
-      if (k === "data") {
-        const d = obj[k];
-        delete obj.data;
-
-        Object.keys(d).forEach((dataKey) => {
-          obj[dataKey] = ParseFaunaObj(d[dataKey]);
-        });
-      } else if (obj[k] === null || obj[k] === undefined) {
+      if (obj[k] === null || obj[k] === undefined) {
         delete obj[k];
       } else {
         obj[k] = ParseFaunaObj(obj[k]);

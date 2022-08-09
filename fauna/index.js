@@ -62,14 +62,23 @@ class FaunaClient {
   async createItem(date, description, value) {
     return this.client
       .query(
-        Create(Collection("items"), {
-          data: {
-            description,
-            value: parseFloat(value),
-            day: FaunaDate(date),
-            user: CurrentIdentity(),
+        Let(
+          {
+            item: Create(Collection("items"), {
+              data: {
+                description,
+                value: parseFloat(value),
+                day: FaunaDate(date),
+                user: CurrentIdentity(),
+              },
+            }),
           },
-        })
+          {
+            id: Select(["ref", "id"], Var("item")),
+            description: Select(["data", "description"], Var("item")),
+            value: Select(["data", "value"], Var("item")),
+          }
+        )
       )
       .then((res) => ParseFaunaObj(res));
   }
