@@ -8,9 +8,8 @@ async function handler(req, res) {
 
     if (req.method === "DELETE") {
       const { id } = req.query;
-      const items = await client.deleteItem(id);
-
-      res.status(200).json(items);
+      const item = await client.deleteItem(id);
+      res.status(200).json(item);
     }
   } catch (error) {
     console.log("error", error);
