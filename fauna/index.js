@@ -85,7 +85,17 @@ class FaunaClient {
 
   async deleteItem(id) {
     return this.client
-      .query(Delete(Ref(Collection("items"), id)))
+      .query(
+        Let(
+          {
+            item: Delete(Ref(Collection("items"), id)),
+          },
+          {
+            id: Select(["ref", "id"], Var("item")),
+            deleted: true,
+          }
+        )
+      )
       .then((res) => ParseFaunaObj(res));
   }
 }

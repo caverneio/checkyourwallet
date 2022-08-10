@@ -22,7 +22,11 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     const theme = localStorage.getItem("theme");
-    document.documentElement.classList.add(theme === "dark" && "dark");
+    if (theme === "light") {
+      document.documentElement.classList.remove("dark");
+    } else {
+      document.documentElement.classList.add("dark");
+    }
   }, []);
 
   return (
@@ -35,14 +39,32 @@ function MyApp({ Component, pageProps }) {
         }}
       >
         <div className="bg-gray-600">
-          <div className="space-y-2 mx-auto max-w-xl bg-white dark:bg-gray-800 dark:text-white h-screen flex flex-col p-4">
+          <div className="space-y-2 mx-auto max-w-xl bg-white dark:bg-gray-800 dark:text-white h-screen flex flex-col p-4 flex flex-col items-center text-center">
+            <div className="flex">
+              <h1 className="text-3xl font-bold text-center ">
+                Check your wallet!
+              </h1>
+              <button onClick={handleSwitchTheme}>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="w-6 h-6"
+                >
+                  <path
+                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                    class="stroke-slate-400 dark:stroke-slate-500"
+                  ></path>
+                  <path
+                    d="M12 4v1M17.66 6.344l-.828.828M20.005 12.004h-1M17.66 17.664l-.828-.828M12 20.01V19M6.34 17.664l.835-.836M3.995 12.004h1.01M6 6l.835.836"
+                    class="stroke-slate-400 dark:stroke-slate-500"
+                  ></path>
+                </svg>
+              </button>
+            </div>
             <Component {...pageProps} />
-            <button
-              onClick={handleSwitchTheme}
-              className="ml-4 font-black text-xs bg-yellow-300 w-10 h-10 rounded-full text-black"
-            >
-              ST
-            </button>
           </div>
         </div>
       </SWRConfig>

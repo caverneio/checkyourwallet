@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useSWRConfig } from "swr";
 import Item from "components/item";
 
-const List = ({ items, date }) => {
+const List = ({ items = [], date }) => {
   const { mutate } = useSWRConfig();
   const descriptionRef = useRef();
   const valueRef = useRef();
@@ -70,7 +70,7 @@ const List = ({ items, date }) => {
     }
   };
   return (
-    <div className="divide-y dark:divide-gray-600 px-4 grid grid-cols-1">
+    <div className="w-full divide-y dark:divide-gray-600 grid grid-cols-1">
       {items &&
         items.length > 0 &&
         items.map((item) => (
